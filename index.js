@@ -3,6 +3,7 @@
     const app = express()
     const bcrypt = require('bcrypt');
 const saveDataToFileSystem = require('./utiles/saveDataToFileSystem');
+const getDataFromFileSystem = require('./utiles/getDataFromFileSystem');
     const port = process.env.PORT || 5000;
 
     app.use(express.json())
@@ -24,6 +25,20 @@ const saveDataToFileSystem = require('./utiles/saveDataToFileSystem');
             })
         }
 
+    })
+    app.post('/login', async(req,res)=>{
+        try{
+        const userFromDataBase = await [getDataFromFileSystem()]
+        const user =await userFromDataBase.find((user)=>{return user.userName === req.body.userName})
+        const result = await bcrypt.compare(req.body.password,user.password,)
+        if(result){
+            res.send(`Hello! ${user.firstName} ${user.lastName}`)
+        }else{
+            res.status(401).send("Login Faild!")
+        }
+        }catch{
+          
+        }
     })
     app.get('/', (req , res)=>{
     res.send("HELLO WORLD FROM NODE JS || EXPRESS")
